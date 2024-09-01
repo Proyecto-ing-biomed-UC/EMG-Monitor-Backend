@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nestjs_app
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=${DB_HOST}  # Nombre del servicio de Docker para PostgreSQL
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    depends_on:
+      - postgres
+    networks:
+      - db-network
+
+  postgres:
+    image: postgres:13  # Especifica una versión de PostgreSQL
+    container_name: db_ciervo
+    restart: always  # Asegura que el contenedor de la base de datos se reinicie automáticamente
+    networks:
+      - db-network
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+
+networks:
+  db-network:
+    driver: bridge
+
+volumes:
+  db-volume:

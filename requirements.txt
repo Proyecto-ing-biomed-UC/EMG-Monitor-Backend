@@ -1,0 +1,10 @@
+numpy
+scipy
+scikit-learn
+seaborn
+tqdm
+paho-mqtt
+influxdb-client
+brainflow
+lightning
+pandas

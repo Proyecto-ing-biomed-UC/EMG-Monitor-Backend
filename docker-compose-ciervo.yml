@@ -3,6 +3,7 @@ services:
   nanomq:
     image: emqx/nanomq:latest
     platform: linux/arm64
+    restart: always
     ports:
       - "1883:1883"
       - "8083:8083"

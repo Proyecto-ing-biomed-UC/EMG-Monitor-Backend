@@ -13,10 +13,14 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
+      - DOCKER_HOST=unix:///var/run/docker.sock
     depends_on:
       - postgres
     networks:
       - db-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # Monta el socket de Docker del host en el contenedor
+  
 
   postgres:
     image: postgres:13  # Especifica una versión de PostgreSQL

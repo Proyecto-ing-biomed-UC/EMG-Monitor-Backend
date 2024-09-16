@@ -1,5 +1,3 @@
-// src/docker/docker.service.ts
-
 import { Injectable } from '@nestjs/common';
 import { exec } from 'child_process';
 
@@ -7,20 +5,24 @@ import { exec } from 'child_process';
 export class DockerService {
   runDockerCompose(): Promise<string> {
     return new Promise((resolve, reject) => {
-      exec('docker compose -f docker-compose-ciervo.yml up -d', (error, stdout, stderr) => {
+      // Ejecutar el comando Docker Compose directamente en el host
+      const command = 'docker compose -f /app/docker-compose-ciervo.yml up -d';
+
+      console.log('Ejecutando comando:', command);  // Log para verificar el comando
+
+      exec(command, (error, stdout, stderr) => {
+        console.log(`stdout: ${stdout}`);  // Log de la salida estándar
+
         if (error) {
-          console.error(`Error al ejecutar docker-compose: ${error.message}`);
-          reject(error.message);
+          console.error(`Error al ejecutar docker-compose en el host: ${error.message}`);
+          reject(`Error: ${error.message}`);
           return;
         }
 
         if (stderr) {
-          console.error(`stderr: ${stderr}`);
-          reject(stderr);
-          return;
+          console.warn(`stderr: ${stderr}`);  // Log de la salida de errores
         }
 
-        console.log(`stdout: ${stdout}`);
         resolve(stdout);
       });
     });
@@ -28,22 +30,25 @@ export class DockerService {
 
   stopDockerCompose(): Promise<string> {
     return new Promise((resolve, reject) => {
-      exec('docker compose -f docker-compose-ciervo.yml down', (error, stdout, stderr) => {
+      const command = 'docker compose -f /app/docker-compose-ciervo.yml down';
+
+      console.log('Ejecutando comando:', command);  // Log para verificar el comando
+
+      exec(command, (error, stdout, stderr) => {
+        console.log(`stdout: ${stdout}`);  // Log de la salida estándar
+
         if (error) {
-          console.error(`Error al detener docker-compose: ${error.message}`);
-          reject(error.message);
+          console.error(`Error al detener docker-compose en el host: ${error.message}`);
+          reject(`Error: ${error.message}`);
           return;
         }
 
         if (stderr) {
-          console.error(`stderr: ${stderr}`);
-          reject(stderr);
-          return;
+          console.warn(`stderr: ${stderr}`);  // Log de la salida de errores
         }
-        console.log(`stdout: ${stdout}`);
-        resolve(stdout);
 
-    })
-})
-}
+        resolve(stdout);
+      });
+    });
+  }
 }

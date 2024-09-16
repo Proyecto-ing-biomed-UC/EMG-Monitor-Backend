@@ -8,26 +8,27 @@ services:
       - '3000:3000'
     environment:
       - NODE_ENV=production
-      - DB_HOST=${DB_HOST}  # Nombre del servicio de Docker para PostgreSQL
-      - DB_PORT=${DB_PORT}
+      - DB_HOST=${DB_HOST}  # Manteniendo como variable de entorno
+      - DB_PORT=${DB_PORT}  # Manteniendo como variable de entorno
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
-      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DOCKER_HOST=unix:///var/run/docker.sock  # Asegura que la API se conecte al socket de Docker
     depends_on:
       - postgres
+      - redis  # Asegura que el contenedor de Redis esté disponible
     networks:
-      - db-network
+      - app-network  # Usando una única red unificada
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock  # Monta el socket de Docker del host en el contenedor
-  
+    privileged: true  # Necesario para permitir la ejecución de Docker dentro del contenedor
 
   postgres:
     image: postgres:13  # Especifica una versión de PostgreSQL
     container_name: db_ciervo
     restart: always  # Asegura que el contenedor de la base de datos se reinicie automáticamente
     networks:
-      - db-network
+      - app-network  # Usando la misma red
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -35,8 +36,17 @@ services:
     volumes:
       - db-volume:/var/lib/postgresql/data
 
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    networks:
+      - app-network  # Usando la misma red
+
 networks:
-  db-network:
+  app-network:  # Red unificada
     driver: bridge
 
 volumes:

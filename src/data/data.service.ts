@@ -8,7 +8,7 @@ import * as path from 'path';
 export class DataService {
   async guardarDatosEnCSV(): Promise<string> {
     return new Promise((resolve, reject) => {
-      exec('python3 saveDataInCSVFormat.py', (error, stdout, stderr) => {
+      exec('python ciervo/save_data/saveDataInCSVFormat.py', (error, stdout, stderr) => {
         if (error) {
           console.error(`Error al ejecutar el script Python: ${error.message}`);
           reject(new HttpException('Error al guardar los datos en CSV', HttpStatus.INTERNAL_SERVER_ERROR));

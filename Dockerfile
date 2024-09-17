@@ -8,6 +8,7 @@ WORKDIR /app
 RUN apk update && apk add --no-cache \
     docker-cli \
     docker-compose
+RUN apk add --no-cache python3 py3-pip
 
 # Copia el archivo de dependencias package.json y package-lock.json al directorio de trabajo
 COPY package*.json ./

@@ -1,5 +1,13 @@
-
 services:
+  dind:
+    image: docker:latest
+    container_name: dind
+    privileged: true  # Necesario para ejecutar Docker dentro de Docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DOCKER_TLS_CERTDIR=  # Desactivar TLS para Docker en DinD
+
   nanomq:
     image: emqx/nanomq:latest
     platform: linux/arm64
@@ -16,13 +24,12 @@ services:
       - NANOMQ_NUM_WORKER_THREAD=4
 
   stream:
-    # image: cgvalle/ciervo_stream:latest
-    platform: linux/arm64
-    restart: always
-    pull_policy: always
     build:
       context: .
       dockerfile: docker/Dockerfile.stream
+    platform: linux/arm64
+    restart: always
+    image: cgvalle/ciervo_stream:latest  # Si la imagen existe en Docker Hub
     depends_on:
       - nanomq
       - influxdb
@@ -40,9 +47,9 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=Ciervo
       - DOCKER_INFLUXDB_INIT_RETENTION=1w
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=holas
-      
     volumes:
       - influxdb-data:/var/lib/influxdb
+
   data_collector:
     build:
       context: .
@@ -57,5 +64,6 @@ services:
       - stream
       - influxdb
     command: python3 /app/ciervo/save_data/getDataFromRaspberry.py
+
 volumes:
   influxdb-data:

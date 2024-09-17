@@ -4,6 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DockerModule } from './docker_service/docker.module';
+import { DataModule } from './data/data.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,6 +24,7 @@ import { DockerModule } from './docker_service/docker.module';
     AuthModule,
     UsersModule,
     DockerModule,
+    DataModule,
   ],
 })
 export class AppModule {}
